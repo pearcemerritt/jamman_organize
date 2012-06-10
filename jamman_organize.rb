@@ -1,15 +1,12 @@
 #! /usr/bin/env ruby
 
-#jamman_dir = Dir.open("JAMMAN")
 Dir.chdir("JAMMAN")
 
-i = 1
-#jamman_dir.each do |jfile|
+# Go through all files in the JAMMAN directory and visit all of them
+# that are non-trivial directories. That is, those of the form
+# LOOPNN, where NN is a number (zero padded) between 0 and 99.
 Dir.foreach(".") do |jfile|
-  ##puts "File: JAMMAN/#{jfile}"
-  #puts "File: " + File.expand_path(jfile)
-  ##puts "Is directory: " + File.directory?(File.expand_path(jfile)).to_s
-  #puts "Is directory: " + File.directory?(jfile).to_s
+
   case
   when File.basename(jfile).eql?(".")
     next
@@ -18,36 +15,36 @@ Dir.foreach(".") do |jfile|
   when File.basename(jfile).eql?("SETUP.XML")
     next
   else
-    puts "Directory: " + File.expand_path(jfile)
+    #puts "Directory: " + File.expand_path(jfile)
+    puts File.basename(jfile) + ":"
 
-    #loop_dir = Dir.open(File.basename(jfile))
     Dir.chdir(jfile) 
 
-    #loop_dir.each do |lfile|
+    # Change the name of each file in LOOPNN from LOOP.EXT to
+    # LOOPNN.EXT. In this case EXT is either "WAV" or "XML".
     Dir.foreach(".") do |lfile|
 
-      case
-      when File.basename(lfile).eql?(".")
-        next
-      when File.basename(lfile).eql?("..")
-        next
-      else
-        puts "  Will change " + lfile + " to " + jfile + File.extname(lfile)
+      # Ignore the trivial hidden directories
+      next if File.directory?(lfile)
 
-        File.rename(lfile, jfile + File.extname(lfile))
-        #if i < 10
-          ##loop_dir = Dir.open("LOOP0" + i.to_s)
-          #puts "  LOOP0" + i.to_s
-        #else
-          #puts "  LOOP" + i.to_s
-        #end
+      #case
+      #when File.basename(lfile).eql?(".")
+        #next
+      #when File.basename(lfile).eql?("..")
+        #next
+      #else
 
-        #++i
-      end # LOOPNN files case
+      puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
+
+      # LOOP.EXT <- LOOPNN.EXT
+      File.rename(lfile, jfile + File.extname(lfile))
+
+      #end # LOOPNN files case
+
     end # LOOPNN files loop
 
     Dir.chdir("..")
-
   end # JAMMAN file case
+
 end # JAMMAN files loop
 
