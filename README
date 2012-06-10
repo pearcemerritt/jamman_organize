@@ -1,0 +1,27 @@
+---[ Files ]---
+
+// This tool can be used to recurse through a JAMMAN folder
+// downloaded from the DigiTech JAMMAN and organize all the poorly
+// named loop files so that they resemble the folders that they
+// are kept in. Specifically:
+//    JAMMAN/LOOPNN/LOOP.WAV <-- JAMMAN/LOOPNN/LOOPNN.WAV
+//    JAMMAN/LOOPNN/LOOP.XML <-- JAMMAN/LOOPNN/LOOPNN.XML
+// The file directory structure is intact, though that may be
+// a possible next direction for this project in learning ruby.
+jamman_organize.rb
+
+// A directory to test the jamman_organize script on full of dummy files
+JAMMAN
+
+// A copy of the original dummy so that I can run the script and
+// modify all the files then clone the unmodified one
+JAMMAN_cp
+
+// Getting off the ground with some test programs
+hello_world.rb
+rename_file.rb
+dir_files_rename.rb
+
+// Test files for the above test programs
+test1.txt
+test_folder
