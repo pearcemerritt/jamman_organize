@@ -1,3 +1,5 @@
+#! /usr/bin/env ruby
+
 ####################################################################
 # File: jamman_organize.rb
 # Author: Pearce Merritt
@@ -18,8 +20,6 @@
 # JavaScript for school as well, but only for web development.
 ####################################################################
 
-#! /usr/bin/env ruby
-
 Dir.chdir("JAMMAN")
 
 # Go through all files in the JAMMAN directory and visit all of them
@@ -34,6 +34,8 @@ Dir.foreach(".") do |jfile|
   when File.basename(jfile).eql?("..")
     next
   when File.basename(jfile).eql?("SETUP.XML")
+    next
+  when File.basename(jfile).eql?(".DS_Store")
     next
   else
     puts File.basename(jfile) + ":"
