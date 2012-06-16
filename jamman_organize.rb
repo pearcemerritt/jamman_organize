@@ -20,6 +20,34 @@
 # JavaScript for school as well, but only for web development.
 ####################################################################
 
+require 'optparse'
+
+# Store options from command line if present.
+options = {}
+
+# Extract destructively the options from the command line and
+# process them using individual cases.
+OptionParser.new do |opts|
+
+  # This is called with the "-h --help" option.
+  opts.banner = "Usage: jamman_organize.rb [-vh]"
+
+  opts.on("-v", "--[no-]verbose", "Output more information") do |v|
+    options[:verbose] = v
+  end # verbose option definition
+
+  opts.on("-h", "--help", "Display this list of options") do
+    puts opts
+    exit
+  end # help option definition
+
+# Parse will not only read the options from the command line,
+# but it will also delete them from ARGV leaving only a list
+# of files. This destructive nature is the reason for the
+# exclamation point.
+end.parse! # OptionParser instantiation
+
+
 Dir.chdir("JAMMAN")
 
 # Go through all files in the JAMMAN directory and visit all of them
@@ -38,7 +66,8 @@ Dir.foreach(".") do |jfile|
   when File.basename(jfile).eql?(".DS_Store")
     next
   else
-    puts File.basename(jfile) + ":"
+    # Verbose output
+    puts File.basename(jfile) + ":" if options[:verbose]
 
     Dir.chdir(jfile) 
 
@@ -49,7 +78,12 @@ Dir.foreach(".") do |jfile|
       # Ignore the trivial hidden directories
       next if File.directory?(lfile)
 
-      puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
+      # If the verbose option has been specified at the command
+      # line, then let the user know exactly which file names are
+      # being altered and how.
+      if options[:verbose]
+        puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
+      end # verbose output if
 
       # LOOP.EXT <- LOOPNN.EXT
       File.rename(lfile, jfile + File.extname(lfile))
