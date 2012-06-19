@@ -25,12 +25,23 @@ require 'optparse'
 # Store options from command line if present.
 options = {}
 
+# Set the default directory to organize: "JAMMAN"
+options[:directory] = "JAMMAN"
+
 # Extract destructively the options from the command line and
 # process them using individual cases.
 OptionParser.new do |opts|
 
   # This is called with the "-h --help" option.
-  opts.banner = "Usage: jamman_organize.rb [-vh]"
+  opts.banner = "Usage: jamman_organize.rb [-vhf]"
+
+  # Note that on this option the hash value is not a boolean
+  # but a string of the directory name specified as the argument
+  # to the "-d" option.
+  opts.on("-d", "--directory DIR", 
+          "Specify directory DIR (default is \"JAMMAN\")") do |d|
+    options[:directory] = d
+  end # directory option definition
 
   opts.on("-v", "--[no-]verbose", "Output more information") do |v|
     options[:verbose] = v
@@ -48,7 +59,8 @@ OptionParser.new do |opts|
 end.parse! # OptionParser instantiation
 
 
-Dir.chdir("JAMMAN")
+#Dir.chdir("JAMMAN")
+Dir.chdir(options[:directory])
 
 # Go through all files in the JAMMAN directory and visit all of them
 # that are non-trivial directories. That is, those of the form
