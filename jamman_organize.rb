@@ -21,6 +21,9 @@
 ####################################################################
 
 require 'optparse'
+require 'FileUtils'
+
+#---Option Handling-------------------------------------------------
 
 # Store options from command line if present.
 options = {}
@@ -58,12 +61,21 @@ OptionParser.new do |opts|
 # exclamation point.
 end.parse! # OptionParser instantiation
 
+#---Option Handling End---------------------------------------------
 
-#Dir.chdir("JAMMAN")
+
+#---Organizing------------------------------------------------------
+
+# First copy the whole directory and save a copy with the same
+# name plus a "_cp" appended to the end.
+FileUtils.cp_r options[:directory], options[:directory] + "_cp"
+
+# This changes to the "JAMMAN" directory unless the user has 
+# specified another directory via the "-d" option.
 Dir.chdir(options[:directory])
 
-# Go through all files in the JAMMAN directory and visit all of them
-# that are non-trivial directories. That is, those of the form
+# Go through all files in the specified directory and visit all of 
+# them that are non-trivial directories. That is, those of the form
 # LOOPNN, where NN is a number (zero padded) between 0 and 99.
 Dir.foreach(".") do |jfile|
 
@@ -94,16 +106,32 @@ Dir.foreach(".") do |jfile|
       # line, then let the user know exactly which file names are
       # being altered and how.
       if options[:verbose]
-        puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
+#        puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
+        puts "  Changing " + lfile + " to " + 
+             "../" + jfile + File.extname(lfile)
       end # verbose output if
 
       # LOOP.EXT <- LOOPNN.EXT
-      File.rename(lfile, jfile + File.extname(lfile))
+#      File.rename(lfile, jfile + File.extname(lfile))
+
+      # Move LOOPNN.EXT to the directory that encloses the
+      # the current directory (i.e. "..")
+#      FileUtils.mv(jfile + File.extname(lfile), "..")
+      FileUtils.mv(lfile, "../" + jfile + File.extname(lfile))
 
     end # LOOPNN files loop
 
     Dir.chdir("..")
-  end # JAMMAN file case
 
-end # JAMMAN files loop
+    # Verbose output
+    puts "  Removing " + jfile if options[:verbose]
+
+    # Remove the LOOPNN folder that we were just in.
+    FileUtils.rm_r(jfile)
+
+  end # directory file case
+
+end # directory files loop
+
+#---Organizing End--------------------------------------------------
 
