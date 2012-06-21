@@ -77,26 +77,27 @@ Dir.chdir(options[:directory])
 # Go through all files in the specified directory and visit all of 
 # them that are non-trivial directories. That is, those of the form
 # LOOPNN, where NN is a number (zero padded) between 0 and 99.
-Dir.foreach(".") do |jfile|
+Dir.foreach(".") do |dfile|
 
   # Ignore the trivial hidden directories and system files
   case
-  when File.basename(jfile).eql?(".")
+  when File.basename(dfile).eql?(".")
     next
-  when File.basename(jfile).eql?("..")
+  when File.basename(dfile).eql?("..")
     next
-  when File.basename(jfile).eql?("SETUP.XML")
+  when File.basename(dfile).eql?("SETUP.XML")
     next
-  when File.basename(jfile).eql?(".DS_Store")
+  when File.basename(dfile).eql?(".DS_Store")
     next
   else
     # Verbose output
-    puts File.basename(jfile) + ":" if options[:verbose]
+    puts File.basename(dfile) + ":" if options[:verbose]
 
-    Dir.chdir(jfile) 
+    Dir.chdir(dfile) 
 
     # Change the name of each file in LOOPNN from LOOP.EXT to
-    # LOOPNN.EXT. In this case EXT is either "WAV" or "XML".
+    # LOOPNN.EXT and extract it into the super directory. 
+    # In this case EXT is either "WAV" or "XML".
     Dir.foreach(".") do |lfile|
 
       # Ignore the trivial hidden directories
@@ -106,28 +107,25 @@ Dir.foreach(".") do |jfile|
       # line, then let the user know exactly which file names are
       # being altered and how.
       if options[:verbose]
-#        puts "  Changing " + lfile + " to " + jfile + File.extname(lfile)
         puts "  Changing " + lfile + " to " + 
-             "../" + jfile + File.extname(lfile)
+             "../" + dfile + File.extname(lfile)
       end # verbose output if
 
-      # LOOP.EXT <- LOOPNN.EXT
-#      File.rename(lfile, jfile + File.extname(lfile))
-
-      # Move LOOPNN.EXT to the directory that encloses the
-      # the current directory (i.e. "..")
-#      FileUtils.mv(jfile + File.extname(lfile), "..")
-      FileUtils.mv(lfile, "../" + jfile + File.extname(lfile))
+      # PseudoCode: LOOPNN.EXT <- ../LOOPNN.EXT
+      # Essentially, this takes care of renaming and extracting
+      # the contents of LOOPNN in one step.
+      FileUtils.mv(lfile, "../" + dfile + File.extname(lfile))
 
     end # LOOPNN files loop
 
     Dir.chdir("..")
 
     # Verbose output
-    puts "  Removing " + jfile if options[:verbose]
+    puts "  Removing " + dfile if options[:verbose]
 
-    # Remove the LOOPNN folder that we were just in.
-    FileUtils.rm_r(jfile)
+    # Remove the LOOPNN directory that we were just in, as the
+    # files have been extracted making it empty and useless.
+    FileUtils.rm_r(dfile)
 
   end # directory file case
 
