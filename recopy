@@ -1,0 +1,8 @@
+#! /bin/bash
+
+rm -r JAMMAN/
+echo removed JAMMAN
+
+mv JAMMAN_cp/ JAMMAN/
+echo renamed JAMMAN_cp to JAMMAN
+
